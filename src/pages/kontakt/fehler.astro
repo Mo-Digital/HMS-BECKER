@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../data/site';
+---
+<Base title="Anfrage nicht gesendet" description="Ihre Anfrage konnte nicht gesendet werden." noindex>
+  <section class="container-x grid min-h-[60vh] place-items-center py-20 text-center">
+    <div class="max-w-xl">
+      <span class="mx-auto grid size-16 place-items-center rounded-2xl bg-signal-btn text-white"><Icon name="CircleAlert" class="size-8" /></span>
+      <h1 class="mt-6 text-4xl font-black">Das hat leider nicht geklappt.</h1>
+      <p class="mt-4 text-lg text-muted">
+        Bitte prüfen Sie, ob Name, Nachricht, Telefon <em>oder</em> E-Mail ausgefüllt sind und Sie der Datenverarbeitung zugestimmt haben.
+      </p>
+      <p class="mt-2 text-muted">Oder melden Sie sich direkt: <a href={site.phone.href} class="font-semibold text-brand-ink underline">{site.phone.display}</a> · <a href={`mailto:${site.email}`} class="font-semibold text-brand-ink underline">{site.email}</a></p>
+      <a href="/kontakt/#anfrage" class="btn btn-primary mt-8">Zurück zum Formular</a>
+    </div>
+  </section>
+</Base>

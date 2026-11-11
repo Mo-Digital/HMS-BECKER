@@ -1,0 +1,365 @@
+@import 'tailwindcss';
+
+/* Dark Mode per data-theme am <html> (Automatik + Umschalter, siehe Base.astro) */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ==========================================================================
+   FARBSYSTEM
+   Markenfarben der alten Seite, modern interpretiert.
+   Alle Farben NUR hier ändern – Tailwind-Klassen wie bg-brand, text-ink
+   greifen automatisch darauf zu.
+   ========================================================================== */
+:root {
+  /* Markenfarben (fix) */
+  --hms-blue: #00339c; /* Hauptblau */
+  --hms-navy: #050578; /* Marineblau */
+  --hms-ice: #cfedfe; /* Eisblau */
+  --hms-lavender: #eae8fd; /* Lavendel-Weiß */
+  --hms-signal: #e4572e; /* Rot-Orange – sparsam! */
+
+  /* Semantische Rollen – hell */
+  --c-bg: #ffffff;
+  --c-surface: #ffffff;
+  --c-surface-alt: var(--hms-lavender);
+  --c-surface-raised: #f6f5ff;
+  --c-line: #dcd9f5;
+  --c-ink: #0b1030; /* Fließtext */
+  --c-muted: #4f5675; /* Nebentext (Kontrast 6.6:1 auf Weiß) */
+  --c-brand: var(--hms-blue);
+  --c-brand-ink: var(--hms-blue); /* Blau als Textfarbe */
+  --c-brand-strong: #00267a;
+  --c-navy: var(--hms-navy);
+  --c-ice: var(--hms-ice);
+  --c-on-brand: #ffffff;
+  --c-signal: var(--hms-signal);
+  --c-signal-btn: #c9431c; /* Button-Fläche: Weiß darauf 4,9:1 */
+  --c-signal-btn-hover: #b13915;
+  --c-signal-ink: #b93a12; /* Signal als Textfarbe auf Hell */
+
+  --c-plan-winter: #2f6fe4;
+  --c-plan-green: #1f9d55;
+  --c-plan-leaf: #d9822b;
+  --c-plan-clean: #7b6cf6;
+
+  --shadow-card: 0 1px 2px rgb(5 5 120 / 0.06), 0 8px 24px -8px rgb(5 5 120 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(5 5 120 / 0.08), 0 24px 48px -16px rgb(5 5 120 / 0.28);
+
+  color-scheme: light;
+}
+
+/* Dunkel – folgt Systemeinstellung, sofern nicht manuell gewählt */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --c-bg: #07072e;
+    --c-surface: #0d0d3d;
+    --c-surface-alt: #10104a;
+    --c-surface-raised: #141456;
+    --c-line: #25256e;
+    --c-ink: #eef2ff;
+    --c-muted: #a9b0d0;
+    --c-brand: #0a3fb8;
+    --c-brand-ink: #8db4ff;
+    --c-brand-strong: #00339c;
+    --c-navy: #03033f;
+    --c-on-brand: #ffffff;
+    --c-signal-ink: #ff8a66;
+    --c-plan-winter: #6ea0ff;
+    --c-plan-green: #3ccf7f;
+    --c-plan-leaf: #f0a24f;
+    --c-plan-clean: #a69cff;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --c-bg: #07072e;
+  --c-surface: #0d0d3d;
+  --c-surface-alt: #10104a;
+  --c-surface-raised: #141456;
+  --c-line: #25256e;
+  --c-ink: #eef2ff;
+  --c-muted: #a9b0d0;
+  --c-brand: #0a3fb8;
+  --c-brand-ink: #8db4ff;
+  --c-brand-strong: #00339c;
+  --c-navy: #03033f;
+  --c-on-brand: #ffffff;
+  --c-signal-ink: #ff8a66;
+  --c-plan-winter: #6ea0ff;
+  --c-plan-green: #3ccf7f;
+  --c-plan-leaf: #f0a24f;
+  --c-plan-clean: #a69cff;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-alt: var(--c-surface-alt);
+  --color-surface-raised: var(--c-surface-raised);
+  --color-line: var(--c-line);
+  --color-ink: var(--c-ink);
+  --color-muted: var(--c-muted);
+  --color-brand: var(--c-brand);
+  --color-brand-ink: var(--c-brand-ink);
+  --color-brand-strong: var(--c-brand-strong);
+  --color-navy: var(--c-navy);
+  --color-ice: var(--c-ice);
+  --color-on-brand: var(--c-on-brand);
+  --color-signal: var(--c-signal);
+  --color-signal-btn: var(--c-signal-btn);
+  --color-signal-ink: var(--c-signal-ink);
+  --color-hms-blue: var(--hms-blue);
+  --color-hms-navy: var(--hms-navy);
+  --color-hms-lavender: var(--hms-lavender);
+
+  --font-display: 'Archivo Variable', 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
+}
+
+/* ==========================================================================
+   BASIS
+   ========================================================================== */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-stretch: 92%;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--hms-ice);
+    color: var(--hms-navy);
+  }
+  :focus-visible {
+    outline: 3px solid var(--hms-signal);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  a {
+    text-underline-offset: 0.2em;
+  }
+}
+
+/* ==========================================================================
+   KOMPONENTEN
+   ========================================================================== */
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .container-x {
+      padding-inline: 2rem;
+    }
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-brand-ink);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 1.5rem;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--hms-signal);
+  }
+
+  .h-section {
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+    font-weight: 800;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3.25rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    line-height: 1.1;
+    text-decoration: none;
+    transition:
+      transform 0.2s ease,
+      background-color 0.2s ease,
+      box-shadow 0.2s ease,
+      color 0.2s ease;
+    will-change: transform;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  .btn:active {
+    transform: translateY(0);
+  }
+  .btn-signal {
+    background: var(--c-signal-btn);
+    color: #fff;
+    box-shadow: 0 10px 30px -10px rgb(228 87 46 / 0.75);
+  }
+  .btn-signal:hover {
+    background: var(--c-signal-btn-hover);
+  }
+  .btn-primary {
+    background: var(--hms-blue);
+    color: #fff;
+    box-shadow: 0 10px 30px -12px rgb(0 51 156 / 0.7);
+  }
+  .btn-primary:hover {
+    background: var(--hms-navy);
+  }
+  .btn-ghost-light {
+    color: var(--hms-ice);
+    box-shadow: inset 0 0 0 2px rgb(207 237 254 / 0.55);
+  }
+  .btn-ghost-light:hover {
+    background: rgb(207 237 254 / 0.12);
+    box-shadow: inset 0 0 0 2px var(--hms-ice);
+  }
+  .btn-ghost {
+    color: var(--c-brand-ink);
+    box-shadow: inset 0 0 0 2px var(--c-line);
+  }
+  .btn-ghost:hover {
+    box-shadow: inset 0 0 0 2px var(--c-brand-ink);
+  }
+
+  .card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Fließtext-Bereiche (Impressum, Datenschutz …) */
+  .prose-hms {
+    max-width: 70ch;
+    line-height: 1.7;
+    color: var(--c-ink);
+  }
+  .prose-hms h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 2.5rem 0 0.75rem;
+    color: var(--c-brand-ink);
+  }
+  .prose-hms h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 1.75rem 0 0.5rem;
+  }
+  .prose-hms p,
+  .prose-hms ul {
+    margin: 0 0 1rem;
+  }
+  .prose-hms ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .prose-hms a {
+    color: var(--c-brand-ink);
+    text-decoration: underline;
+  }
+
+  /* Diagonales „Kehr-Streifen“-Muster für blaue Flächen */
+  .sweep-pattern {
+    background-image: repeating-linear-gradient(
+      -55deg,
+      rgb(207 237 254 / 0.06) 0 2px,
+      transparent 2px 22px
+    );
+  }
+
+  /* Markierung für noch zu ergänzende Angaben */
+  .todo-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.1rem 0.55rem;
+    border-radius: 0.4rem;
+    background: #fff3b0;
+    color: #5b4300;
+    border: 1px dashed #b38600;
+    font-size: 0.9em;
+    font-weight: 600;
+  }
+}
+
+/* ==========================================================================
+   ANIMATIONEN (nur mit JS + ohne reduzierte Bewegung)
+   ========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Saison-Banner: Sichtbarkeit per data-season am <html> (Inline-Skript im <head>) */
+[data-season-banner] {
+  display: none;
+}
+html[data-season='winter']:not([data-banner-closed]) [data-season-banner='winter'],
+html[data-season='spring']:not([data-banner-closed]) [data-season-banner='spring'] {
+  display: block;
+}

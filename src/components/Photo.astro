@@ -1,0 +1,102 @@
+---
+/**
+ * Foto mit automatischer Optimierung (AVIF/WebP, responsive, Lazy Loading).
+ *
+ * So tauschen Sie einen Platzhalter gegen ein echtes Foto:
+ *   Legen Sie eine Datei mit dem passenden Namen in src/assets/fotos/
+ *   z. B. src/assets/fotos/fuhrpark.jpg  →  <Photo name="fuhrpark" … />
+ *   Erlaubt: .jpg .jpeg .png .webp .avif
+ * Fehlt die Datei, erscheint ein klar beschrifteter Platzhalter.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  name: string;
+  alt: string;
+  /** Beschriftung des Platzhalters, z. B. „Fuhrpark: Transporter & Maschinen“ */
+  placeholder?: string;
+  icon?: string;
+  class?: string;
+  /** Seitenverhältnis, z. B. "4/3", "16/9", "1/1" */
+  ratio?: string;
+  sizes?: string;
+  widths?: number[];
+  eager?: boolean;
+  tone?: 'light' | 'brand';
+  /** Platzhalter ohne Beschriftung (z. B. Team-Fotos) */
+  quiet?: boolean;
+}
+
+const {
+  name,
+  alt,
+  placeholder,
+  icon = 'Camera',
+  class: className = '',
+  ratio = '4/3',
+  sizes = '(min-width: 1024px) 50vw, 100vw',
+  widths = [400, 640, 960, 1280, 1600],
+  eager = false,
+  tone = 'light',
+  quiet = false,
+} = Astro.props;
+
+const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/fotos/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}', { eager: true });
+const match = Object.entries(files).find(([path]) => path.split('/').pop()!.replace(/\.[^.]+$/, '').toLowerCase() === name.toLowerCase());
+const image = match?.[1].default;
+const iconName = icon === 'Camera' ? 'Camera' : icon;
+---
+{
+  image ? (
+    <Picture
+      src={image}
+      alt={alt}
+      formats={['avif', 'webp']}
+      widths={widths.filter((w) => w <= image.width)}
+      sizes={sizes}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+      decoding="async"
+      class:list={['h-full w-full object-cover', className]}
+      style={`aspect-ratio:${ratio}`}
+    />
+  ) : (
+    <div
+      role="img"
+      aria-label={alt}
+      class:list={['photo-ph relative isolate grid h-full w-full place-items-center overflow-hidden', `photo-ph--${tone}`, className]}
+      style={`aspect-ratio:${ratio}`}
+    >
+      <div class="flex flex-col items-center gap-3 px-6 text-center">
+        <Icon name={iconName} class:list={[quiet ? 'size-16 opacity-40' : 'size-12 opacity-80']} strokeWidth={1.5} />
+        {site.showPlaceholderLabels && !quiet && (
+          <>
+            <span class="text-xs font-bold tracking-[0.18em] uppercase opacity-80">Platzhalter · Foto folgt</span>
+            {placeholder && <span class="max-w-[28ch] text-sm font-medium opacity-90">{placeholder}</span>}
+            <code class="rounded bg-black/10 px-2 py-0.5 text-[0.7rem] opacity-80">src/assets/fotos/{name}.jpg</code>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .photo-ph--light {
+    color: var(--c-brand-ink);
+    background:
+      repeating-linear-gradient(-55deg, color-mix(in srgb, var(--c-brand-ink) 7%, transparent) 0 2px, transparent 2px 18px),
+      linear-gradient(135deg, var(--c-surface-alt), var(--c-surface-raised));
+    border: 2px dashed color-mix(in srgb, var(--c-brand-ink) 30%, transparent);
+  }
+  .photo-ph--brand {
+    color: var(--hms-ice);
+    background:
+      repeating-linear-gradient(-55deg, rgb(207 237 254 / 0.08) 0 2px, transparent 2px 18px),
+      linear-gradient(135deg, #0a3fb8, var(--hms-navy));
+    border: 2px dashed rgb(207 237 254 / 0.35);
+  }
+</style>

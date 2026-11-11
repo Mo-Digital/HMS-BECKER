@@ -1,0 +1,97 @@
+# =====================================================================
+#  hms-becker.de – Apache-Konfiguration
+#  Diese Datei liegt im Hauptordner des Webspace (neben index.html).
+# =====================================================================
+
+Options -Indexes -MultiViews
+DirectoryIndex index.html index.php
+AddDefaultCharset UTF-8
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # --- HTTPS + www erzwingen (nur für die echte Domain) ----------------
+  # Falls Ihr Hoster kein SSL-Zertifikat hat, diese 3 Zeilen auskommentieren (#).
+  RewriteCond %{HTTP_HOST} ^(www\.)?hms-becker\.de$ [NC]
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} ^hms-becker\.de$ [NC]
+  RewriteRule ^ https://www.hms-becker.de%{REQUEST_URI} [L,R=301]
+
+  # Alte Startseite /index.htm -> /  (THE_REQUEST, damit der interne
+  # Aufruf von index.html durch DirectoryIndex nicht umgeleitet wird)
+  RewriteCond %{THE_REQUEST} \s/index\.html?[\s?] [NC]
+  RewriteRule ^index\.html?$ / [L,R=301]
+</IfModule>
+
+# --- 301-Weiterleitungen von der alten Website (2006) -----------------
+# Damit Google-Rankings und alte Links/Lesezeichen erhalten bleiben.
+<IfModule mod_alias.c>
+  RedirectMatch 301 ^/ueberuns\.html?$        /ueber-uns/
+  RedirectMatch 301 ^/firma\.html?$           /ueber-uns/
+  RedirectMatch 301 ^/leistungen\.html?$      /leistungen/
+  RedirectMatch 301 ^/a\.html?$               /leistungen/aussenreinigung/
+  RedirectMatch 301 ^/w\.html?$               /leistungen/winterdienst/
+  RedirectMatch 301 ^/g\.html?$               /leistungen/gruenpflege/
+  RedirectMatch 301 ^/s\.html?$               /leistungen/seniorenbetreuung/
+  RedirectMatch 301 ^/h\.html?$               /leistungen/entruempelung/
+  RedirectMatch 301 ^/u\.html?$               /leistungen/umzugshilfe/
+  RedirectMatch 301 ^/wb\.html?$              /leistungen/wasser-brandschaden/
+  RedirectMatch 301 ^/schimmel\.html?$        /leistungen/schimmel/
+  RedirectMatch 301 ^/sonstiges\.html?$       /leistungen/hausmeisterdienst/
+  RedirectMatch 301 ^/referenzen\.html?$      /referenzen/
+  RedirectMatch 301 ^/stellen\.html?$         /karriere/
+  RedirectMatch 301 ^/kontakt\.html?$         /kontakt/
+  RedirectMatch 301 ^/impressum\.html?$       /impressum/
+  RedirectMatch 301 ^/datenschutz\.html?$     /datenschutz/
+  # Alte Bilder (z. B. aus der Google-Bildersuche) -> Startseite
+  RedirectMatch 301 ^/img/.*$                 /
+  RedirectMatch 301 ^/mystyle\.css$           /
+</IfModule>
+
+# --- Sicherheit ---------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+  # HSTS erst aktivieren, wenn HTTPS sicher dauerhaft läuft:
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# Versteckte Dateien (z. B. .git) sperren
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# --- Kompression ----------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/xml application/javascript application/json image/svg+xml application/manifest+json
+</IfModule>
+
+# --- Caching ----------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                          "access plus 1 hour"
+  ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType image/avif                "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 month"
+  ExpiresByType image/svg+xml             "access plus 1 month"
+  ExpiresByType application/xml           "access plus 1 day"
+</IfModule>
+<IfModule mod_headers.c>
+  # Dateien in /_astro/ haben Hash-Namen und ändern sich nie
+  <If "%{REQUEST_URI} =~ m#^/_astro/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+</IfModule>
+
+AddType font/woff2 .woff2
+AddType image/avif .avif
+AddType image/webp .webp
+AddType application/manifest+json .webmanifest

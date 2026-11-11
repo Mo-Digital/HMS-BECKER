@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Mascot from '../components/Mascot.astro';
+import { site } from '../data/site';
+---
+<Base title="Vielen Dank für Ihre Anfrage" description="Ihre Anfrage ist bei Hausmeister-Service Becker eingegangen." noindex>
+  <section class="container-x grid min-h-[60vh] place-items-center py-20 text-center">
+    <div class="max-w-xl">
+      <div class="mx-auto w-32 text-brand-ink"><Mascot label={false} /></div>
+      <h1 class="mt-6 text-5xl font-black">Vielen Dank!</h1>
+      <p class="mt-4 text-lg text-muted">Ihre Anfrage ist bei uns angekommen. Wir melden uns schnellstmöglich bei Ihnen.</p>
+      <p class="mt-2 text-muted">Eilt es? Rufen Sie uns an: <a href={site.phone.href} class="font-semibold text-brand-ink underline">{site.phone.display}</a></p>
+      <a href="/" class="btn btn-primary mt-8"><Icon name="House" class="size-5" /> Zur Startseite</a>
+    </div>
+  </section>
+</Base>

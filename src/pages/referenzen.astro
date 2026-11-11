@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { references } from '../data/references';
+import { site } from '../data/site';
+const visible = references.filter((r) => !r.placeholder || site.showPlaceholderLabels);
+---
+<Base
+  title="Referenzen – Hausmeisterservice Heilbronn"
+  description="Referenzen von Hausmeister-Service Becker: langjähriger Partner der Stadtsiedlung Heilbronn für Hausverwaltungsaufgaben sowie Brand- und Wasserschäden inkl. Versicherungsabwicklung."
+  hero="brand"
+>
+  <PageHero title="Referenzen" eyebrow="Vertrauen" lead="Zufriedene Kunden sind die Basis für unseren Erfolg! Hier sehen Sie einen kleinen Auszug unserer Referenzliste." crumbs={[{ label: 'Referenzen' }]} />
+
+  <section class="container-x space-y-8 py-16 md:py-20" aria-label="Referenzliste">
+    {
+      visible.map((r) =>
+        r.placeholder ? (
+          <article class="rounded-[2rem] border-2 border-dashed border-line p-8 text-center text-muted" data-reveal>
+            <Icon name="Building2" class="mx-auto size-10 opacity-60" />
+            <h2 class="mt-3 font-display text-xl font-bold text-ink">{r.name}</h2>
+            {r.text.map((t) => <p class="mx-auto mt-2 max-w-xl">{t}</p>)}
+          </article>
+        ) : (
+          <article class="card grid overflow-hidden lg:grid-cols-[1fr_1.6fr]" data-reveal>
+            <div class="sweep-pattern flex flex-col justify-between gap-8 bg-hms-blue p-8 text-white md:p-10">
+              <div>
+                <p class="text-sm font-bold tracking-[0.16em] text-ice uppercase">{r.sector}</p>
+                <h2 class="mt-3 text-3xl font-black md:text-4xl">{r.name}</h2>
+                {r.since && <p class="mt-2 text-ice">Kunde {r.since}</p>}
+              </div>
+              {r.logo && (
+                <div class="w-56 overflow-hidden rounded-xl bg-white">
+                  <Photo name={r.logo} alt={`Logo ${r.name}`} placeholder={`Logo ${r.name}`} icon="Building2" ratio="4/1" widths={[240, 480]} sizes="224px" />
+                </div>
+              )}
+              {r.url && (
+                <a href={r.url} class="inline-flex items-center gap-2 font-semibold text-white underline" rel="noopener">
+                  Website besuchen <Icon name="ExternalLink" class="size-4" />
+                </a>
+              )}
+            </div>
+            <div class="p-8 md:p-10">
+              <Icon name="Quote" class="size-10 text-brand-ink opacity-30" />
+              <div class="mt-3 space-y-4 text-lg leading-relaxed">{r.text.map((t) => <p>{t}</p>)}</div>
+              <ul class="mt-6 flex flex-wrap gap-2">
+                {r.tags.map((t) => (
+                  <li class="rounded-full bg-surface-alt px-3 py-1 text-sm font-semibold">{t}</li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ),
+      )
+    }
+  </section>
+
+  <CtaBand title="Werden Sie unsere nächste Referenz." />
+</Base>

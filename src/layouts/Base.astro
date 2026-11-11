@@ -1,0 +1,127 @@
+---
+/**
+ * Grundgerüst jeder Seite: <head> mit SEO, Open Graph, JSON-LD,
+ * Schriften (lokal!), Header, Footer, Anruf-Leiste.
+ */
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/archivo/wdth.css';
+import '../styles/global.css';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CallBar from '../components/CallBar.astro';
+import SeasonBanner from '../components/SeasonBanner.astro';
+import { site } from '../data/site';
+import { services } from '../data/services';
+import { seasonBanners } from '../data/season';
+
+interface Props {
+  title: string;
+  description: string;
+  /** 'brand' = Seite beginnt mit blauem Hero (Header passt sich an) */
+  hero?: 'brand' | 'plain';
+  ogImage?: string;
+  noindex?: boolean;
+  /** zusätzliche JSON-LD-Objekte (Breadcrumbs, FAQ, Stellen …) */
+  schema?: Record<string, unknown>[];
+}
+
+const { title, description, hero = 'plain', ogImage = '/og-image.png', noindex = false, schema = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const fullTitle = title.includes('Becker') ? title : `${title} | ${site.name}`;
+const ogUrl = new URL(ogImage, site.url).href;
+
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'HomeAndConstructionBusiness',
+  '@id': `${site.url}/#business`,
+  name: site.name,
+  alternateName: 'HMS Becker',
+  url: `${site.url}/`,
+  logo: `${site.url}/favicon.svg`,
+  image: ogUrl,
+  telephone: site.phone.intl,
+  faxNumber: site.fax.intl,
+  email: site.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    postalCode: site.address.zip,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    addressCountry: site.address.country,
+  },
+  ...(site.geo ? { geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng } } : {}),
+  areaServed: site.areaServed.map((name) => ({ '@type': 'City', name })),
+  founder: { '@type': 'Person', name: site.owner },
+  sameAs: [site.sister.url],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Leistungen',
+    itemListElement: services.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.title, url: `${site.url}/leistungen/${s.slug}/` },
+    })),
+  },
+};
+
+// Saison-Logik für das Inline-Skript (Daten aus src/data/season.ts)
+const seasonMap = Object.fromEntries(seasonBanners.flatMap((b) => b.months.map((m) => [m, b.key])));
+const headScript = `(function(){var d=document.documentElement;d.classList.add('js');var t;try{t=localStorage.getItem('hms-theme')}catch(e){}var mq=window.matchMedia('(prefers-color-scheme: dark)');d.setAttribute('data-theme',t||(mq.matches?'dark':'light'));if(!t&&mq.addEventListener)mq.addEventListener('change',function(e){try{if(localStorage.getItem('hms-theme'))return}catch(_){}d.setAttribute('data-theme',e.matches?'dark':'light')});var m=new Date().getMonth()+1;d.setAttribute('data-month',m);var s=${JSON.stringify(seasonMap)}[m];if(s)d.setAttribute('data-season',s);try{if(sessionStorage.getItem('hms-banner-closed'))d.setAttribute('data-banner-closed','')}catch(e){}})();`;
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline set:html={headScript} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#00339C" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#050578" media="(prefers-color-scheme: dark)" />
+    <meta name="format-detection" content="telephone=yes" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Hausmeister-Service Becker, Heilbronn – Telefon 07131 / 62 82 20" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="geo.region" content="DE-BW" />
+    <meta name="geo.placename" content="Heilbronn" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...s })} />)}
+  </head>
+  <body data-hero={hero} class="min-h-dvh pb-[4.75rem] md:pb-0">
+    <SeasonBanner />
+    <Header />
+    <main id="main" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+    <Footer />
+    <CallBar />
+    <script>
+      import '../scripts/ui';
+    </script>
+  </body>
+</html>

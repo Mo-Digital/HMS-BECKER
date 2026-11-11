@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /send.php
+Disallow: /danke/
+Disallow: /kontakt/fehler/
+
+Sitemap: https://www.hms-becker.de/sitemap-index.xml

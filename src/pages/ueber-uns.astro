@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import Mascot from '../components/Mascot.astro';
+import KehrwocheSign from '../components/KehrwocheSign.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { team, languageNames } from '../data/team';
+import { site } from '../data/site';
+
+const initials = (n: string) => n.split(' ').map((p) => p[0]).join('');
+---
+<Base
+  title="Über uns – Hausmeisterservice aus Heilbronn"
+  description="Hausmeister-Service Becker aus Heilbronn: Wie alles mit der Kehrwoche begann, unser Arbeitsgebiet im Stadtkreis Heilbronn und unser Team mit Ansprechpartnern auf Deutsch, Englisch, Thai und Russisch."
+  hero="brand"
+  schema={[
+    {
+      '@type': 'AboutPage',
+      name: 'Über uns',
+      url: `${site.url}/ueber-uns/`,
+      about: { '@id': `${site.url}/#business` },
+    },
+  ]}
+>
+  <PageHero
+    title="Über uns"
+    eyebrow="Hausmeister-Service Becker"
+    lead="Mit der Übernahme der schwäbischen Kehrwoche für zwei ältere Damen fing es an …"
+    crumbs={[{ label: 'Über uns' }]}
+  />
+
+  <!-- Geschichte -->
+  <section class="container-x grid items-center gap-14 py-16 md:py-24 lg:grid-cols-[1.2fr_1fr]" aria-labelledby="geschichte">
+    <div data-reveal>
+      <p class="eyebrow">Unsere Geschichte</p>
+      <h2 id="geschichte" class="h-section mt-3">Von der Kehrwoche zum Rundum-Service.</h2>
+      <div class="prose-hms mt-6 space-y-4 text-lg">
+        <p>
+          Heute übernimmt unser Hausmeisterdienst für Hausverwaltungen, Firmen und Privathaushalte alle anfallenden Arbeiten rund ums Gebäude – von allgemeinen Instandhaltungsarbeiten bis hin zur Grünanlagenpflege.
+        </p>
+        <p>
+          Angebote werden individuell erstellt, denn kein Objekt gleicht dem anderen. Die Dienstleistungen können ganz nach Wunsch und wie vor Ort benötigt zusammengestellt werden.
+        </p>
+      </div>
+    </div>
+    <div class="flex justify-center" data-reveal>
+      <div class="rounded-[2rem] bg-hms-blue px-6 pt-4 pb-10 sweep-pattern">
+        <KehrwocheSign />
+      </div>
+    </div>
+  </section>
+
+  <!-- Fakten -->
+  <section class="bg-surface-alt py-20" aria-label="Arbeitsweise">
+    <ul class="container-x grid gap-5 md:grid-cols-3">
+      <li class="card p-7" data-reveal>
+        <span class="grid size-12 place-items-center rounded-xl bg-hms-blue text-white"><Icon name="MapPin" class="size-6" /></span>
+        <h3 class="mt-4 text-xl font-extrabold">Stadtkreis Heilbronn</h3>
+        <p class="mt-2 text-muted">Wir arbeiten vorzugsweise im Stadtkreis Heilbronn – so können wir, wenn’s mal „brennt“, auch schnell vor Ort sein.</p>
+      </li>
+      <li class="card p-7" data-reveal style="--reveal-delay:90ms">
+        <span class="grid size-12 place-items-center rounded-xl bg-hms-blue text-white"><Icon name="Users" class="size-6" /></span>
+        <h3 class="mt-4 text-xl font-extrabold">Vertretung</h3>
+        <p class="mt-2 text-muted">Wir übernehmen die Arbeiten selbstverständlich auch vertretungsweise – z. B. wenn Sie in Urlaub fahren oder der Hausmeister einmal krank ist.</p>
+      </li>
+      <li class="card p-7" data-reveal style="--reveal-delay:180ms">
+        <span class="grid size-12 place-items-center rounded-xl bg-hms-blue text-white"><Icon name="Languages" class="size-6" /></span>
+        <h3 class="mt-4 text-xl font-extrabold">Vier Sprachen</h3>
+        <p class="mt-2 text-muted">Betreuung auf Deutsch, Englisch, Thailändisch und Russisch – damit sich alle Mieter verstanden fühlen.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Team -->
+  <section class="container-x pt-24" aria-labelledby="team-title">
+    <div class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-2xl" data-reveal>
+        <p class="eyebrow">Unser Team</p>
+        <h2 id="team-title" class="h-section mt-3">Ihre Ansprechpartner.</h2>
+        <p class="mt-4 text-lg text-muted">Persönlich, direkt erreichbar – und auf Wunsch in Ihrer Sprache.</p>
+      </div>
+      <div class="w-28 shrink-0 text-brand-ink md:w-36" data-reveal><Mascot /></div>
+    </div>
+    <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        team.map((m, i) => (
+          <li class="card flex flex-col overflow-hidden" data-reveal style={`--reveal-delay:${(i % 3) * 80}ms`}>
+            <div class="team-photo relative">
+              <Photo name={m.photo} alt={`Porträt ${m.name}`} placeholder={`Porträt ${m.name}`} icon="User" ratio="4/3" quiet sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" />
+              <span class="absolute bottom-4 left-4 grid size-14 place-items-center rounded-2xl bg-hms-blue font-display text-xl font-black text-white shadow-lg" aria-hidden="true">{initials(m.name)}</span>
+            </div>
+            <div class="flex flex-1 flex-col p-6">
+              <h3 class="text-2xl font-extrabold">{m.name}</h3>
+              <ul class="mt-2 flex-1 space-y-0.5 text-muted">
+                {m.roles.map((r) => <li>{r}</li>)}
+              </ul>
+              <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Sprachen">
+                {m.languages.map((l) => (
+                  <li><abbr title={languageNames[l]} class="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold tracking-wider text-brand-ink no-underline">{l}</abbr></li>
+                ))}
+              </ul>
+              <a href={`mailto:${m.email}`} class="mt-5 inline-flex items-center gap-2 font-semibold break-all text-brand-ink hover:underline">
+                <Icon name="Mail" class="size-5 shrink-0" /> {m.email}
+              </a>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Fuhrpark -->
+  <section class="container-x mt-24" aria-labelledby="fuhrpark">
+    <div class="overflow-hidden rounded-[2rem] shadow-[var(--shadow-lift)]" data-reveal>
+      <Photo name="fuhrpark" alt="Fuhrpark von Hausmeister-Service Becker: weiße Transporter und Maschinen auf dem Firmengelände" placeholder="Fuhrpark & Firmengelände (Breitformat)" icon="Truck" ratio="21/9" sizes="100vw" />
+    </div>
+    <h2 id="fuhrpark" class="sr-only">Fuhrpark</h2>
+  </section>
+
+  <!-- Schwesterfirma -->
+  <section class="container-x mt-16" aria-labelledby="fliesen">
+    <div class="card flex flex-col gap-6 p-6 sm:p-8 md:flex-row md:items-center md:justify-between" data-reveal>
+      <div>
+        <p class="eyebrow">Schwesterfirma</p>
+        <h2 id="fliesen" class="mt-2 text-2xl font-extrabold">Fliesen gesucht? Besuchen Sie Fliesen Becker.</h2>
+        <p class="mt-1 text-muted">Unsere Fliesenleger-Abteilung unter der Leitung von Ralf Rockenberger.</p>
+      </div>
+      <a href={site.sister.url} class="btn btn-primary shrink-0" rel="noopener">{site.sister.label} <Icon name="ExternalLink" class="size-5" /></a>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

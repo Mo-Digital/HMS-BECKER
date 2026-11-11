@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import MapConsent from '../../components/MapConsent.astro';
+import { site } from '../../data/site';
+---
+<Base
+  title="Kontakt – Hausmeister-Service Becker Heilbronn"
+  description="Kontakt zu Hausmeister-Service Becker, Gotenstr. 5, 74081 Heilbronn. Tel. 07131 / 62 82 20, Notfall 0171 / 47 53 416, info@hms-becker.de – oder Angebot online anfragen."
+  hero="brand"
+  schema={[{ '@type': 'ContactPage', name: 'Kontakt', url: `${site.url}/kontakt/`, about: { '@id': `${site.url}/#business` } }]}
+>
+  <PageHero title="Kontakt" eyebrow="Wir sind für Sie da" lead="Rufen Sie an, schreiben Sie uns oder fragen Sie direkt ein Angebot an. Wir melden uns schnellstmöglich." crumbs={[{ label: 'Kontakt' }]} />
+
+  <section class="container-x grid gap-10 py-16 md:py-20 lg:grid-cols-[1fr_1.25fr]">
+    <div class="space-y-5">
+      <a href={site.phone.href} class="contact-tile card group" data-reveal>
+        <span class="tile-ico bg-signal-btn text-white"><Icon name="Phone" class="size-6" /></span>
+        <span><span class="block text-sm font-semibold text-muted">Telefon</span><span class="block font-display text-2xl font-extrabold text-ink group-hover:text-brand-ink">{site.phone.display}</span></span>
+      </a>
+      <a href={site.mobile.href} class="contact-tile card group" data-reveal>
+        <span class="tile-ico bg-hms-blue text-white"><Icon name="Siren" class="size-6" /></span>
+        <span><span class="block text-sm font-semibold text-muted">Mobil / Notfall</span><span class="block font-display text-2xl font-extrabold text-ink group-hover:text-brand-ink">{site.mobile.display}</span></span>
+      </a>
+      <a href={`mailto:${site.email}`} class="contact-tile card group" data-reveal>
+        <span class="tile-ico bg-hms-blue text-white"><Icon name="Mail" class="size-6" /></span>
+        <span><span class="block text-sm font-semibold text-muted">E-Mail</span><span class="block font-display text-2xl font-extrabold break-all text-ink group-hover:text-brand-ink">{site.email}</span></span>
+      </a>
+      <div class="grid gap-5 sm:grid-cols-[1.4fr_1fr]">
+        <div class="contact-tile card" data-reveal>
+          <span class="tile-ico bg-surface-alt text-brand-ink"><Icon name="MapPin" class="size-6" /></span>
+          <address class="not-italic"><span class="block text-sm font-semibold text-muted">Adresse</span><span class="font-semibold">{site.name}<br />{site.address.street}<br />{site.address.zip} {site.address.city}</span></address>
+        </div>
+        <div class="contact-tile card" data-reveal>
+          <span class="tile-ico bg-surface-alt text-brand-ink"><Icon name="Printer" class="size-6" /></span>
+          <span><span class="block text-sm font-semibold text-muted">Fax</span><span class="font-semibold">{site.fax.display}</span></span>
+        </div>
+      </div>
+      <div data-reveal><MapConsent /></div>
+    </div>
+
+    <div>
+      <h2 class="text-3xl font-extrabold" data-reveal>Angebot anfragen</h2>
+      <p class="mt-2 mb-6 text-muted" data-reveal>Beschreiben Sie kurz Ihr Anliegen – wir erstellen Ihnen ein individuelles Angebot.</p>
+      <ContactForm />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact-tile {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1.25rem 1.4rem;
+    text-decoration: none;
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s;
+  }
+  a.contact-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  .tile-ico {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 1rem;
+    flex-shrink: 0;
+  }
+</style>

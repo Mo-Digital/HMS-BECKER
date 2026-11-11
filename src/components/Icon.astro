@@ -1,0 +1,37 @@
+---
+/**
+ * SVG-Icon aus dem Lucide-Set (https://lucide.dev, ISC-Lizenz).
+ * Wird beim Build eingesetzt – kein JavaScript im Browser.
+ * Beispiel: <Icon name="Phone" class="size-5" />
+ */
+import { icons } from 'lucide';
+
+interface Props {
+  name: string;
+  class?: string;
+  strokeWidth?: number;
+  label?: string;
+}
+const { name, class: className = 'size-6', strokeWidth = 2, label } = Astro.props;
+const node = (icons as Record<string, [string, Record<string, string | number>][]>)[name];
+if (!node) throw new Error(`Icon "${name}" existiert nicht in lucide`);
+const esc = (v: string | number) => String(v).replace(/"/g, '&quot;');
+const inner = node
+  .map(([tag, attrs]) => `<${tag} ${Object.entries(attrs).map(([k, v]) => `${k}="${esc(v)}"`).join(' ')} />`)
+  .join('');
+---
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={inner}
+/>
