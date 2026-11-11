@@ -1,0 +1,45 @@
+---
+/** Kopfbereich für Unterseiten (blau, mit Brotkrumen-Navigation) */
+import Icon from './Icon.astro';
+interface Props {
+  title: string;
+  lead?: string;
+  eyebrow?: string;
+  icon?: string;
+  crumbs?: { label: string; href?: string }[];
+}
+const { title, lead, eyebrow, icon, crumbs = [] } = Astro.props;
+---
+<section class="sweep-pattern relative overflow-hidden bg-hms-blue text-white">
+  <div class="pointer-events-none absolute -right-40 -bottom-40 size-[28rem] rounded-full bg-ice/10 blur-3xl" aria-hidden="true"></div>
+  <div class="container-x relative pt-8 pb-16 md:pt-10 md:pb-20">
+    {
+      crumbs.length > 0 && (
+        <nav aria-label="Brotkrumen" class="mb-8 text-sm text-ice/90">
+          <ol class="flex flex-wrap items-center gap-1.5">
+            <li><a href="/" class="hover:text-white hover:underline">Start</a></li>
+            {crumbs.map((c) => (
+              <li class="flex items-center gap-1.5">
+                <Icon name="ChevronRight" class="size-3.5 opacity-70" />
+                {c.href ? <a href={c.href} class="hover:text-white hover:underline">{c.label}</a> : <span aria-current="page" class="text-white">{c.label}</span>}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    <div class="flex items-start gap-5">
+      {icon && (
+        <span class="hidden size-16 shrink-0 place-items-center rounded-2xl bg-white/10 text-ice ring-1 ring-white/15 sm:grid">
+          <Icon name={icon} class="size-8" strokeWidth={1.75} />
+        </span>
+      )}
+      <div class="max-w-3xl">
+        {eyebrow && <p class="mb-3 font-display text-sm font-bold tracking-[0.18em] text-ice uppercase">{eyebrow}</p>}
+        <h1 class="text-[clamp(2.4rem,1.6rem+3.6vw,4.25rem)] font-black text-white">{title}</h1>
+        {lead && <p class="mt-5 text-lg leading-relaxed text-ice md:text-xl">{lead}</p>}
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>

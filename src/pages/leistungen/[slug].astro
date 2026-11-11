@@ -1,0 +1,234 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Photo from '../../components/Photo.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import Todo from '../../components/Todo.astro';
+import { services, type Service } from '../../data/services';
+import { monthNames } from '../../data/season';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { slug: s.slug }, props: { service: s } }));
+}
+const { service: s } = Astro.props as { service: Service };
+const idx = services.findIndex((o) => o.slug === s.slug);
+const related = [services[(idx + 1) % services.length], services[(idx + 2) % services.length], services[(idx + 3) % services.length]];
+
+const schema: Record<string, unknown>[] = [
+  {
+    '@type': 'Service',
+    name: s.title,
+    serviceType: s.title,
+    description: s.description,
+    url: `${site.url}/leistungen/${s.slug}/`,
+    provider: { '@id': `${site.url}/#business` },
+    areaServed: { '@type': 'City', name: 'Heilbronn' },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Start', item: `${site.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Leistungen', item: `${site.url}/leistungen/` },
+      { '@type': 'ListItem', position: 3, name: s.title, item: `${site.url}/leistungen/${s.slug}/` },
+    ],
+  },
+];
+if (s.faq?.length) {
+  schema.push({
+    '@type': 'FAQPage',
+    mainEntity: s.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  });
+}
+const allYear = s.months.length === 12;
+const season = allYear
+  ? 'Ganzjährig'
+  : `${monthNames[s.months[0] - 1]} – ${monthNames[s.months[s.months.length - 1] - 1]}`;
+---
+<Base title={s.seoTitle} description={s.description} hero="brand" schema={schema}>
+  <PageHero title={s.title} lead={s.lead} icon={s.icon} crumbs={[{ label: 'Leistungen', href: '/leistungen/' }, { label: s.title }]}>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      {
+        s.emergency ? (
+          <a href={site.mobile.href} class="btn btn-signal !text-lg"><Icon name="Siren" class="size-5" /> Notfall: {site.mobile.display}</a>
+        ) : (
+          <a href={site.phone.href} class="btn btn-signal !text-lg"><Icon name="Phone" class="size-5" /> {site.phone.display}</a>
+        )
+      }
+      <a href={`/kontakt/?leistung=${s.slug}#anfrage`} class="btn btn-ghost-light">Angebot anfragen <Icon name="ArrowRight" class="size-5" /></a>
+    </div>
+  </PageHero>
+
+  <section class="container-x grid gap-12 py-16 md:py-20 lg:grid-cols-[1.35fr_1fr]">
+    <div>
+      <div class="prose-hms space-y-5 text-lg" data-reveal>
+        {s.body.map((p) => <p>{p}</p>)}
+      </div>
+
+      <div class="card mt-10 p-6 sm:p-8" data-reveal>
+        <h2 class="text-2xl font-extrabold">{s.listTitle}</h2>
+        <ul class="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+          {s.list.map((item) => (
+            <li class="flex gap-3">
+              <Icon name="Check" class="mt-0.5 size-6 shrink-0 rounded-full bg-hms-blue p-1 text-white" strokeWidth={3} />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {s.extra?.map((x) => (
+        <div class="mt-12" data-reveal>
+          {x.type === 'text' && (
+            <div class="rounded-3xl bg-surface-alt p-6 sm:p-8">
+              <h2 class="text-2xl font-extrabold">{x.title}</h2>
+              {x.paragraphs.map((p) => <p class="mt-3 text-lg">{p}</p>)}
+            </div>
+          )}
+
+          {x.type === 'steps' && (
+            <>
+              <h2 class="text-3xl font-extrabold">{x.title}</h2>
+              {x.intro && <p class="mt-2 text-muted">{x.intro}</p>}
+              <ol class="steps mt-8 space-y-0">
+                {x.steps.map((st, i) => (
+                  <li class="relative flex gap-5 pb-8 last:pb-0">
+                    <span class="z-10 grid size-11 shrink-0 place-items-center rounded-full bg-hms-blue font-display text-lg font-black text-white">{i + 1}</span>
+                    <div class="pt-1.5">
+                      <h3 class="text-lg font-extrabold">{st.title}</h3>
+                      <p class="mt-1 text-muted">{st.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
+
+          {x.type === 'checklist' && (
+            <div class="rounded-3xl bg-surface-alt p-6 sm:p-8">
+              <h2 class="text-2xl font-extrabold">{x.title}</h2>
+              {x.intro && <p class="mt-2 text-muted">{x.intro}</p>}
+              <div class="mt-6 grid gap-6 sm:grid-cols-3">
+                {x.groups.map((g) => (
+                  <fieldset>
+                    <legend class="font-display font-bold text-brand-ink">{g.title}</legend>
+                    <ul class="mt-3 space-y-2">
+                      {g.items.map((it) => (
+                        <li>
+                          <label class="flex cursor-pointer items-center gap-3">
+                            <input type="checkbox" class="size-5 accent-[var(--hms-blue)]" />
+                            <span>{it}</span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </fieldset>
+                ))}
+              </div>
+              <button type="button" class="btn btn-ghost mt-6 !min-h-11 print:hidden" onclick="window.print()"><Icon name="Printer" class="size-5" /> Checkliste drucken</button>
+            </div>
+          )}
+
+          {x.type === 'prices' && (
+            <div>
+              <h2 class="text-3xl font-extrabold">{x.title}</h2>
+              {x.needsReview && site.showPlaceholderLabels && <p class="mt-3"><Todo label="Preise von der alten Website (Stand 08/2008) – bitte aktualisieren" /></p>}
+              <div class="mt-6 space-y-6">
+                {x.groups.map((g) => (
+                  <div class="card overflow-hidden">
+                    <h3 class="bg-surface-alt px-6 py-4 text-lg font-extrabold">{g.title}</h3>
+                    <dl class="divide-y divide-line">
+                      {g.rows.map((r) => (
+                        <div class="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                          <dt>
+                            <span class="font-semibold">{r.label}</span>
+                            {r.detail && <span class="mt-0.5 block text-sm text-muted">{r.detail}</span>}
+                          </dt>
+                          <dd class="shrink-0 font-display text-lg font-extrabold whitespace-nowrap text-brand-ink">{r.price}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                ))}
+              </div>
+              <p class="mt-3 text-sm text-muted">{x.note}</p>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {
+        s.faq && s.faq.length > 0 && (
+          <div class="mt-14" data-reveal>
+            <h2 class="text-3xl font-extrabold">Häufige Fragen</h2>
+            <div class="mt-6 space-y-3">
+              {s.faq.map((f) => (
+                <details class="faq card group p-0">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-display text-lg font-bold">
+                    {f.q}
+                    <Icon name="ChevronDown" class="size-5 shrink-0 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <p class="px-6 pb-6 text-muted">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+
+    <aside class="space-y-6 lg:sticky lg:top-28 lg:self-start" aria-label="Kontakt und Infos">
+      <div class="overflow-hidden rounded-3xl" data-reveal>
+        <Photo name={s.photo} alt={`${s.title} – Hausmeister-Service Becker in Heilbronn`} placeholder={`Foto: ${s.title}`} icon={s.icon} ratio="4/3" sizes="(min-width: 1024px) 40vw, 100vw" />
+      </div>
+      <div class="card p-6" data-reveal>
+        <dl class="grid grid-cols-2 gap-4 text-sm">
+          <div><dt class="text-muted">Saison</dt><dd class="mt-1 font-display text-base font-bold">{season}</dd></div>
+          <div><dt class="text-muted">Einsatzgebiet</dt><dd class="mt-1 font-display text-base font-bold">Stadtkreis Heilbronn</dd></div>
+        </dl>
+      </div>
+      <div class="sweep-pattern rounded-3xl bg-hms-navy p-6 text-white" data-reveal>
+        <p class="font-display text-xl font-extrabold">Fragen zu „{s.shortTitle ?? s.title}“?</p>
+        <p class="mt-2 text-ice">Wir beraten Sie gern und erstellen Ihnen ein individuelles Angebot.</p>
+        <div class="mt-5 grid gap-3">
+          <a href={site.phone.href} class="btn btn-signal w-full"><Icon name="Phone" class="size-5" /> {site.phone.display}</a>
+          <a href={`/kontakt/?leistung=${s.slug}#anfrage`} class="btn btn-ghost-light w-full">Anfrage senden</a>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="container-x" aria-labelledby="weitere-title">
+    <h2 id="weitere-title" class="text-3xl font-extrabold">Weitere Leistungen</h2>
+    <ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {related.map((o, i) => <li><ServiceCard service={o} index={i} /></li>)}
+    </ul>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .steps li:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 1.375rem;
+    top: 2.75rem;
+    bottom: 0;
+    width: 2px;
+    background: var(--c-line);
+    transform: translateX(-50%);
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  @media print {
+    :global(header),
+    :global(footer),
+    :global(.callbar) {
+      display: none !important;
+    }
+  }
+</style>

@@ -1,0 +1,211 @@
+---
+/**
+ * Interaktiver Jahresplan: Welche Leistung fällt wann an?
+ * Aktueller Monat wird automatisch hervorgehoben (im Browser berechnet).
+ * Daten: src/data/season.ts
+ */
+import Icon from './Icon.astro';
+import { yearPlan, monthNames, monthTips } from '../data/season';
+
+const months = Array.from({ length: 12 }, (_, i) => i + 1);
+const buildMonth = new Date().getMonth() + 1;
+const highlightCss = months
+  .map((m) => `html[data-month='${m}'] .yp [data-m='${m}']`)
+  .join(',');
+const selectedCss = months.map((m) => `.yp[data-sel='${m}'] [data-m='${m}']`).join(',');
+const panelCss = months.map((m) => `.yp[data-sel='${m}'] [data-panel='${m}']`).join(',');
+const css = `${highlightCss}{--is-now:1}${selectedCss}{--is-sel:1}${panelCss}{display:block}`;
+---
+<div class="yp card overflow-hidden p-4 sm:p-6 md:p-8" data-sel={buildMonth}>
+  <style is:inline set:html={css}></style>
+
+  <!-- Monatsauswahl -->
+  <div class="yp-grid" role="group" aria-label="Monat auswählen">
+    <span class="yp-label hidden md:block"></span>
+    {
+      months.map((m) => (
+        <button type="button" class="yp-month" data-m={m} aria-label={monthNames[m - 1]} aria-pressed={m === buildMonth ? 'true' : 'false'}>
+          <span class="md:hidden">{monthNames[m - 1].slice(0, 1)}</span>
+          <span class="hidden md:inline">{monthNames[m - 1].slice(0, 3)}</span>
+          <span class="yp-now-dot" aria-hidden="true"></span>
+        </button>
+      ))
+    }
+  </div>
+
+  <!-- Leistungs-Balken -->
+  <ul class="mt-3 space-y-4 md:space-y-2.5">
+    {
+      yearPlan.map((row) => (
+        <li class="yp-grid items-center">
+          <a href={row.href} class="yp-label col-span-12 mb-1 flex items-center gap-2 font-display font-bold text-ink hover:text-brand-ink md:col-span-1 md:mb-0">
+            <Icon name={row.icon} class="size-5 shrink-0" />
+            <span>{row.label}</span>
+            <span class="sr-only">: {row.months.map((m) => monthNames[m - 1]).join(', ')}</span>
+          </a>
+          {months.map((m) => {
+            const on = (row.months as readonly number[]).includes(m);
+            const prev = (row.months as readonly number[]).includes(m === 1 ? 12 : m - 1) && m !== 1;
+            const next = (row.months as readonly number[]).includes(m === 12 ? 1 : m + 1) && m !== 12;
+            return (
+              <span
+                class:list={['yp-cell', on && 'is-on', on && !prev && 'start', on && !next && 'end']}
+                data-m={m}
+                style={on ? `--bar:${row.color}` : undefined}
+                aria-hidden="true"
+              />
+            );
+          })}
+        </li>
+      ))
+    }
+  </ul>
+
+  <!-- Info zum gewählten Monat -->
+  <div class="mt-6 rounded-2xl bg-surface-alt p-5" aria-live="polite">
+    {
+      months.map((m) => (
+        <div data-panel={m} class="hidden">
+          <p class="flex flex-wrap items-center gap-2 font-display text-lg font-extrabold text-brand-ink">
+            <Icon name="CalendarDays" class="size-5" /> {monthNames[m - 1]}
+            <span class="yp-now-badge rounded-full bg-signal-btn px-2.5 py-0.5 text-xs font-bold text-white" data-now-badge={m}>
+              jetzt
+            </span>
+          </p>
+          <p class="mt-2 text-ink">{monthTips[m - 1]}</p>
+          <ul class="mt-3 flex flex-wrap gap-2">
+            {yearPlan
+              .filter((r) => (r.months as readonly number[]).includes(m))
+              .map((r) => (
+                <li>
+                  <a href={r.href} class="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-sm font-semibold text-ink shadow-sm ring-1 ring-line hover:ring-brand-ink">
+                    <span class="size-2.5 rounded-full" style={`background:${r.color}`} />
+                    {r.label}
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .yp-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0;
+  }
+  @media (min-width: 768px) {
+    .yp-grid {
+      grid-template-columns: 13rem repeat(12, minmax(0, 1fr));
+    }
+  }
+  .yp-month {
+    --is-now: 0;
+    --is-sel: 0;
+    position: relative;
+    height: 2.75rem;
+    margin: 0 1px;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--c-muted);
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .yp-month:hover {
+    background: var(--c-surface-alt);
+    color: var(--c-ink);
+  }
+  .yp-month[data-m] {
+    background: color-mix(in srgb, var(--hms-blue) calc(var(--is-sel) * 100%), transparent);
+    color: color-mix(in srgb, #fff calc(var(--is-sel) * 100%), var(--c-muted));
+  }
+  .yp-now-dot {
+    position: absolute;
+    left: 50%;
+    bottom: 0.3rem;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 99px;
+    background: var(--hms-signal);
+    transform: translateX(-50%) scale(var(--is-now));
+  }
+  .yp-cell {
+    --is-now: 0;
+    position: relative;
+    height: 1.6rem;
+    background: color-mix(in srgb, var(--hms-signal) calc(var(--is-now) * 9%), transparent);
+  }
+  .yp-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0.3rem 0;
+    background: var(--c-line);
+    opacity: 0.35;
+  }
+  .yp-cell.is-on::before {
+    background: var(--bar);
+    opacity: 1;
+  }
+  .yp-cell.is-on.start::before {
+    border-top-left-radius: 99px;
+    border-bottom-left-radius: 99px;
+    left: 2px;
+  }
+  .yp-cell.is-on.end::before {
+    border-top-right-radius: 99px;
+    border-bottom-right-radius: 99px;
+    right: 2px;
+  }
+  .yp-cell.is-on::after {
+    content: '';
+    position: absolute;
+    inset: 0.3rem 0;
+    box-shadow: 0 0 0 calc(var(--is-now) * 3px) color-mix(in srgb, var(--hms-signal) 70%, transparent);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .yp-now-badge {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js .yp .yp-cell.is-on::before {
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+      transition-delay: calc(var(--d, 0) * 1ms);
+    }
+    .js .yp.is-visible .yp-cell.is-on::before,
+    .js [data-reveal].is-visible .yp .yp-cell.is-on::before {
+      transform: none;
+    }
+  }
+</style>
+<style is:global>
+  html[data-month='1'] [data-now-badge='1'],html[data-month='2'] [data-now-badge='2'],html[data-month='3'] [data-now-badge='3'],html[data-month='4'] [data-now-badge='4'],html[data-month='5'] [data-now-badge='5'],html[data-month='6'] [data-now-badge='6'],html[data-month='7'] [data-now-badge='7'],html[data-month='8'] [data-now-badge='8'],html[data-month='9'] [data-now-badge='9'],html[data-month='10'] [data-now-badge='10'],html[data-month='11'] [data-now-badge='11'],html[data-month='12'] [data-now-badge='12'] {
+    display: inline-block;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.yp').forEach((yp) => {
+    const now = String(new Date().getMonth() + 1);
+    const btns = yp.querySelectorAll<HTMLButtonElement>('.yp-month');
+    const select = (m: string) => {
+      yp.dataset.sel = m;
+      btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
+    };
+    select(now);
+    btns.forEach((b) => b.addEventListener('click', () => select(b.dataset.m!)));
+    // Balken nacheinander einwachsen lassen
+    yp.querySelectorAll<HTMLElement>('.yp-cell').forEach((c) => c.style.setProperty('--d', String(Number(c.dataset.m) * 35)));
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (yp.classList.add('is-visible'), io.disconnect())), { threshold: 0.25 });
+      io.observe(yp);
+    } else yp.classList.add('is-visible');
+  });
+</script>

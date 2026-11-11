@@ -1,0 +1,230 @@
+---
+/**
+ * Das „Kehrwoche“-Schild – Signatur-Element der Website.
+ * Zeigt die aktuelle Kalenderwoche (wird im Browser live berechnet).
+ * Klick/Enter dreht das Schild um: Rückseite erzählt die Firmengeschichte.
+ */
+import { isoWeek } from '../scripts/date';
+interface Props {
+  class?: string;
+  size?: 'lg' | 'sm';
+}
+const { class: className = '', size = 'lg' } = Astro.props;
+const buildWeek = isoWeek();
+---
+<div class:list={['kw-wrap relative', size === 'lg' ? 'kw-lg' : 'kw-sm', className]}>
+  <svg class="kw-string" viewBox="0 0 200 70" aria-hidden="true" preserveAspectRatio="none">
+    <circle cx="100" cy="6" r="5" fill="#cfedfe" />
+    <path d="M100 8 30 66M100 8l70 58" stroke="#cfedfe" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  </svg>
+  <button type="button" class="kw-sign group" aria-pressed="false" aria-label="Kehrwoche-Schild umdrehen">
+    <span class="kw-inner">
+      <span class="kw-face kw-front">
+        <span class="kw-hole kw-hole-l" aria-hidden="true"></span>
+        <span class="kw-hole kw-hole-r" aria-hidden="true"></span>
+        <span class="kw-overline">Diese Woche hat</span>
+        <span class="kw-title">Kehrwoche</span>
+        <span class="kw-row">
+          <span class="kw-week">KW <span data-kw>{buildWeek}</span></span>
+          <span class="kw-who">Becker</span>
+        </span>
+        <span class="kw-broom" aria-hidden="true">
+          <svg viewBox="0 0 120 16"><path d="M4 12c20-8 60-10 112-6" stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none" /></svg>
+        </span>
+        <span class="kw-hint">umdrehen ↻</span>
+      </span>
+      <span class="kw-face kw-back">
+        <span class="kw-overline">Wie alles begann</span>
+        <span class="kw-story">Mit der Übernahme der schwäbischen Kehrwoche für zwei ältere Damen fing es an. Heute kümmern wir uns um ganze Wohnanlagen – die Kehrwoche machen wir immer noch.</span>
+        <span class="kw-hint">zurück ↻</span>
+      </span>
+    </span>
+  </button>
+</div>
+
+<script>
+  import { isoWeek } from '../scripts/date';
+  const w = String(isoWeek());
+  document.querySelectorAll('[data-kw]').forEach((el) => (el.textContent = w));
+  document.querySelectorAll<HTMLButtonElement>('.kw-sign').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+    });
+  });
+</script>
+
+<style>
+  .kw-wrap {
+    perspective: 1200px;
+  }
+  .kw-lg {
+    width: min(100%, 22rem);
+  }
+  .kw-sm {
+    width: 14rem;
+  }
+  .kw-string {
+    display: block;
+    width: 70%;
+    height: 3.5rem;
+    margin: 0 auto -0.6rem;
+  }
+  .kw-sign {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    transform-origin: 50% -3rem;
+    border-radius: 1.25rem;
+    background: none;
+    border: 0;
+    padding: 0;
+    text-align: center;
+  }
+  .kw-inner {
+    position: relative;
+    display: grid;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.3, 1.3, 0.5, 1);
+  }
+  .kw-sign[aria-pressed='true'] .kw-inner {
+    transform: rotateY(180deg);
+  }
+  .kw-face {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 1.6rem 1.4rem 1.2rem;
+    border-radius: 1.25rem;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    position: relative;
+  }
+  .kw-front {
+    background:
+      radial-gradient(120% 80% at 30% 0%, rgb(255 255 255 / 0.9), transparent 60%),
+      linear-gradient(160deg, #ffffff, #e8f6ff);
+    color: var(--hms-navy);
+    box-shadow:
+      inset 0 0 0 5px #fff,
+      inset 0 0 0 8px var(--hms-blue),
+      0 30px 60px -20px rgb(0 0 0 / 0.55);
+  }
+  .kw-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(160deg, #e4572e, #c9431c);
+    color: #fff;
+    box-shadow:
+      inset 0 0 0 5px rgb(255 255 255 / 0.25),
+      0 30px 60px -20px rgb(0 0 0 / 0.55);
+  }
+  .kw-hole {
+    position: absolute;
+    top: 0.9rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 99px;
+    background: var(--hms-navy);
+    box-shadow: inset 0 2px 2px rgb(0 0 0 / 0.5);
+  }
+  .kw-hole-l {
+    left: 1.3rem;
+  }
+  .kw-hole-r {
+    right: 1.3rem;
+  }
+  .kw-overline {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .kw-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-stretch: 80%;
+    font-size: clamp(2.2rem, 1.6rem + 2.5vw, 3.1rem);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--hms-blue);
+  }
+  .kw-sm .kw-title {
+    font-size: 1.8rem;
+  }
+  .kw-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.2rem;
+  }
+  .kw-week {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 99px;
+    background: var(--hms-blue);
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+  .kw-who {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .kw-broom {
+    width: 60%;
+    color: #e4572e;
+    line-height: 0;
+  }
+  .kw-story {
+    font-size: 0.98rem;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+  .kw-hint {
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.6;
+    letter-spacing: 0.06em;
+  }
+  .kw-sign:focus-visible {
+    outline: 3px solid #e4572e;
+    outline-offset: 6px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .kw-sign {
+      animation: kw-swing 6s ease-in-out infinite;
+    }
+    .kw-sign:hover,
+    .kw-sign:focus-visible,
+    .kw-sign[aria-pressed='true'] {
+      animation-play-state: paused;
+    }
+    .kw-broom path {
+      stroke-dasharray: 130;
+      stroke-dashoffset: 130;
+      animation: kw-sweep 1.4s 0.6s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+    }
+  }
+  @keyframes kw-swing {
+    0%,
+    100% {
+      transform: rotate(-2.2deg);
+    }
+    50% {
+      transform: rotate(2.2deg);
+    }
+  }
+  @keyframes kw-sweep {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

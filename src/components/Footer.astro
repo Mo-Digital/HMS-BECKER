@@ -1,0 +1,65 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import Mascot from './Mascot.astro';
+import { site, mainNav, legalNav } from '../data/site';
+import { services } from '../data/services';
+const year = new Date().getFullYear();
+---
+<footer class="relative mt-40 bg-hms-navy text-ice md:mt-48" aria-labelledby="footer-title">
+  <!-- Maskottchen schaut über die Kante -->
+  <div class="absolute right-6 bottom-full -mb-2 w-24 text-white md:right-16 md:w-32">
+    <Mascot label={false} />
+  </div>
+  <h2 id="footer-title" class="sr-only">Kontakt und weitere Informationen</h2>
+  <div class="sweep-pattern">
+    <div class="container-x grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr]">
+      <div>
+        <Logo tone="light" />
+        <p class="mt-5 max-w-sm text-ice/85">
+          Ihr Dienstleistungsbetrieb für alles rund ums Haus – im Stadtkreis Heilbronn. Sie genießen Ihr Leben, wir kümmern uns um den Rest.
+        </p>
+        <a href={site.sister.url} class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-ice/30 px-4 py-2.5 text-white hover:border-ice" rel="noopener">
+          <span class="flex flex-col leading-tight">
+            <span class="text-xs tracking-wider text-ice/80 uppercase">Schwesterfirma</span>
+            <span class="font-semibold">{site.sister.label}</span>
+          </span>
+          <Icon name="ExternalLink" class="size-4" />
+        </a>
+      </div>
+
+      <nav aria-label="Leistungen">
+        <p class="mb-4 font-display text-sm font-bold tracking-[0.18em] text-white uppercase">Leistungen</p>
+        <ul class="space-y-2">
+          {services.map((s) => <li><a href={`/leistungen/${s.slug}/`} class="text-ice/85 hover:text-white hover:underline">{s.title}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav aria-label="Unternehmen">
+        <p class="mb-4 font-display text-sm font-bold tracking-[0.18em] text-white uppercase">Unternehmen</p>
+        <ul class="space-y-2">
+          <li><a href="/" class="text-ice/85 hover:text-white hover:underline">Startseite</a></li>
+          {mainNav.slice(1).map((n) => <li><a href={n.href} class="text-ice/85 hover:text-white hover:underline">{n.label}</a></li>)}
+          {legalNav.map((n) => <li><a href={n.href} class="text-ice/85 hover:text-white hover:underline">{n.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <div>
+        <p class="mb-4 font-display text-sm font-bold tracking-[0.18em] text-white uppercase">Kontakt</p>
+        <address class="space-y-3 not-italic">
+          <p class="flex gap-3"><Icon name="MapPin" class="mt-0.5 size-5 shrink-0" /><span>{site.name}<br />{site.address.street}<br />{site.address.zip} {site.address.city}</span></p>
+          <p class="flex gap-3"><Icon name="Phone" class="mt-0.5 size-5 shrink-0" /><a href={site.phone.href} class="font-semibold text-white hover:underline">{site.phone.display}</a></p>
+          <p class="flex gap-3"><Icon name="Siren" class="mt-0.5 size-5 shrink-0 text-signal" /><span>Notfall/Mobil: <a href={site.mobile.href} class="font-semibold text-white hover:underline">{site.mobile.display}</a></span></p>
+          <p class="flex gap-3"><Icon name="Printer" class="mt-0.5 size-5 shrink-0" /><span>Fax {site.fax.display}</span></p>
+          <p class="flex gap-3"><Icon name="Mail" class="mt-0.5 size-5 shrink-0" /><a href={`mailto:${site.email}`} class="font-semibold text-white hover:underline">{site.email}</a></p>
+        </address>
+      </div>
+    </div>
+    <div class="border-t border-ice/15">
+      <div class="container-x flex flex-col gap-2 py-6 text-sm text-ice/70 sm:flex-row sm:items-center sm:justify-between">
+        <p>© 2006–{year} {site.name}, Heilbronn</p>
+        <p>Keine Cookies. Kein Tracking. Schriften lokal.</p>
+      </div>
+    </div>
+  </div>
+</footer>

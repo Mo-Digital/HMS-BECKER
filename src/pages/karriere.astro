@@ -1,0 +1,70 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { jobs, jobsEmail } from '../data/jobs';
+import { site } from '../data/site';
+
+const schema = jobs.map((j) => ({
+  '@type': 'JobPosting',
+  title: j.title,
+  description: `<p>${j.summary}</p><ul>${j.requirements.map((r) => `<li>${r}</li>`).join('')}</ul><p>Bei Ortsfremden ist der Arbeitgeber bei der Wohnungssuche behilflich.</p>`,
+  // Bitte bei Änderungen der Stelle aktualisieren (Google zeigt sonst veraltete Anzeigen nicht an)
+  datePosted: '2026-11-01',
+  employmentType: j.id === 'winterdienst' ? 'PART_TIME' : 'FULL_TIME',
+  hiringOrganization: { '@type': 'Organization', name: site.name, sameAs: site.url },
+  jobLocation: {
+    '@type': 'Place',
+    address: { '@type': 'PostalAddress', streetAddress: site.address.street, postalCode: site.address.zip, addressLocality: site.address.city, addressCountry: 'DE' },
+  },
+}));
+---
+<Base
+  title="Karriere – Jobs beim Hausmeisterservice in Heilbronn"
+  description="Jobs in Heilbronn: Winterdienst-Helfer (Minijob), Fliesenleger (m/w/d) und Gas-Wasser-Installateur (m/w/d) bei Hausmeister-Service Becker. Hilfe bei der Wohnungssuche."
+  hero="brand"
+  schema={schema}
+>
+  <PageHero title="Karriere" eyebrow="Wir suchen Verstärkung" lead="Zuverlässig, anpackend, gerne auch mit Lebenserfahrung? Dann passen Sie zu uns. Hier finden Sie unsere aktuellen Stellenangebote." crumbs={[{ label: 'Karriere' }]} />
+
+  <section class="container-x py-16 md:py-20" aria-label="Stellenangebote">
+    <div class="mb-10 flex flex-col gap-4 rounded-3xl bg-surface-alt p-6 sm:flex-row sm:items-center" data-reveal>
+      <span class="grid size-12 shrink-0 place-items-center rounded-xl bg-hms-blue text-white"><Icon name="KeyRound" class="size-6" /></span>
+      <p class="text-lg"><strong>Sie ziehen für den Job nach Heilbronn?</strong> Bei Ortsfremden ist der Arbeitgeber bei der Wohnungssuche behilflich!</p>
+    </div>
+
+    {
+      jobs.length === 0 ? (
+        <p class="text-lg">Aktuell sind keine Stellen ausgeschrieben – Initiativbewerbungen sind jederzeit willkommen.</p>
+      ) : (
+        <ul class="grid gap-6 lg:grid-cols-3">
+          {jobs.map((j, i) => (
+            <li class="card flex flex-col p-7" id={j.id} data-reveal style={`--reveal-delay:${i * 90}ms`}>
+              <span class="grid size-14 place-items-center rounded-2xl bg-hms-blue text-white"><Icon name={j.icon} class="size-7" /></span>
+              <p class="mt-5 text-sm font-semibold text-muted">{j.type}</p>
+              <h2 class="mt-1 text-2xl font-extrabold">{j.title}</h2>
+              <p class="mt-3 text-muted">{j.summary}</p>
+              <h3 class="mt-5 font-display font-bold">Das bringen Sie mit</h3>
+              <ul class="mt-2 flex-1 space-y-2">
+                {j.requirements.map((r) => (
+                  <li class="flex gap-2.5"><Icon name="Check" class="mt-0.5 size-5 shrink-0 text-brand-ink" strokeWidth={3} />{r}</li>
+                ))}
+              </ul>
+              <div class="mt-7 grid gap-2">
+                <a href={`mailto:${jobsEmail}?subject=${encodeURIComponent('Bewerbung: ' + j.title)}`} class="btn btn-primary"><Icon name="Mail" class="size-5" /> Per E-Mail bewerben</a>
+                <a href="/kontakt/?leistung=bewerbung#anfrage" class="btn btn-ghost">Über das Kontaktformular</a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="sweep-pattern mt-14 rounded-[2rem] bg-hms-navy p-8 text-white md:p-12" data-reveal>
+      <h2 class="text-3xl font-extrabold">So bewerben Sie sich</h2>
+      <p class="mt-3 max-w-2xl text-lg text-ice">
+        Bewerbungen bitte per E-Mail an <a href={`mailto:${jobsEmail}`} class="font-semibold text-white underline">{jobsEmail}</a> oder direkt online über unser <a href="/kontakt/?leistung=bewerbung#anfrage" class="font-semibold text-white underline">Kontaktformular</a>. Lieber erst kurz sprechen? Rufen Sie an: <a href={site.phone.href} class="font-semibold whitespace-nowrap text-white underline">{site.phone.display}</a>.
+      </p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,37 @@
+---
+/**
+ * Google Maps erst nach Klick (DSGVO). Vorher wird keine Verbindung zu Google aufgebaut.
+ */
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+const q = encodeURIComponent(`${site.name}, ${site.address.street}, ${site.address.zip} ${site.address.city}`);
+const embed = `https://www.google.com/maps?q=${q}&output=embed`;
+const link = `https://www.google.com/maps/search/?api=1&query=${q}`;
+---
+<div class="map-consent card relative overflow-hidden" data-embed={embed} style="aspect-ratio: 4/3">
+  <div class="map-ph sweep-pattern absolute inset-0 flex flex-col items-center justify-center gap-4 bg-hms-navy p-6 text-center text-ice">
+    <Icon name="MapPin" class="size-10 text-signal" />
+    <p class="font-display text-xl font-bold text-white">{site.address.street}, {site.address.zip} {site.address.city}</p>
+    <p class="max-w-sm text-sm text-ice/85">
+      Mit Klick auf „Karte laden“ wird eine Verbindung zu Google hergestellt und Daten (u. a. Ihre IP-Adresse) an Google übertragen. Mehr in der <a href="/datenschutz/#google-maps" class="underline">Datenschutzerklärung</a>.
+    </p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <button type="button" class="btn btn-signal !min-h-11" data-map-load>Karte laden</button>
+      <a href={link} class="btn btn-ghost-light !min-h-11" target="_blank" rel="noopener noreferrer">In Google Maps öffnen <Icon name="ExternalLink" class="size-4" /></a>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('.map-consent').forEach((box) => {
+    box.querySelector('[data-map-load]')?.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = box.dataset.embed!;
+      f.title = 'Karte: Standort Hausmeister-Service Becker';
+      f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      f.className = 'absolute inset-0 h-full w-full border-0';
+      box.querySelector('.map-ph')?.remove();
+      box.appendChild(f);
+    });
+  });
+</script>

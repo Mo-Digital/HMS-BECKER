@@ -1,0 +1,9 @@
+---
+/**
+ * Markiert Angaben, die Sie noch ergänzen müssen (gelb, gestrichelt).
+ * Suche im Projekt nach "<Todo" zeigt alle offenen Stellen.
+ */
+interface Props { label: string }
+const { label } = Astro.props;
+---
+<span class="todo-mark" data-todo>⚠ Bitte ergänzen: {label}</span>

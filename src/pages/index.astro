@@ -1,0 +1,264 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import KehrwocheSign from '../components/KehrwocheSign.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import YearPlan from '../components/YearPlan.astro';
+import Photo from '../components/Photo.astro';
+import Mascot from '../components/Mascot.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import { services } from '../data/services';
+
+const benefits = [
+  { icon: 'MapPin', title: 'Schnell vor Ort', text: 'Wir arbeiten vorzugsweise im Stadtkreis Heilbronn – so sind wir auch schnell da, wenn’s mal „brennt“.' },
+  { icon: 'ClipboardCheck', title: 'Individuelle Angebote', text: 'Kein Objekt gleicht dem anderen. Leistungen stellen wir genau so zusammen, wie Sie sie vor Ort brauchen.' },
+  { icon: 'Users', title: 'Vertretung inklusive', text: 'Ihr Hausmeister ist im Urlaub oder krank? Wir springen ein – zuverlässig und ohne Lücke.' },
+  { icon: 'Handshake', title: 'Alles aus einer Hand', text: 'Vom Treppenhaus bis zur Schadensanierung samt Versicherungsabwicklung – ein Ansprechpartner für alles.' },
+];
+---
+<Base
+  title="Hausmeisterservice Heilbronn – Hausmeister-Service Becker"
+  description="Hausmeisterservice in Heilbronn: Hausmeisterdienst, Kehrwoche, Winterdienst, Grünpflege, Entrümpelung, Umzugshilfe, Wasser- & Brandschäden. Tel. 07131 / 62 82 20."
+  hero="brand"
+>
+  <!-- ============================== HERO ============================== -->
+  <section class="hero sweep-pattern relative overflow-hidden bg-hms-blue text-white">
+    <div class="hero-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-x relative grid items-center gap-12 pt-10 pb-24 md:pt-16 lg:grid-cols-[1.25fr_1fr] lg:pb-32">
+      <div>
+        <p class="hero-in mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-ice ring-1 ring-white/15">
+          <Icon name="MapPin" class="size-4" /> Hausmeisterservice in Heilbronn
+        </p>
+        <h1 class="hero-in text-[clamp(2.75rem,1.5rem+5.6vw,5.75rem)] leading-[0.95] font-black text-white" style="--d:80ms">
+          Ihr Haus in<br />
+          <span class="hero-mark">guten Händen.</span>
+        </h1>
+        <p class="hero-in mt-7 max-w-xl text-lg leading-relaxed text-ice md:text-xl" style="--d:160ms">
+          Ob Hausmeister für Ihre Mieter, Winterdienst oder „nur“ die Kehrwoche: Wir sind Ihr kompetenter Partner rund um die Haustechnik und die Pflege Ihrer Liegenschaft.
+        </p>
+        <div class="hero-in mt-9 flex flex-col gap-3 sm:flex-row" style="--d:240ms">
+          <a href={site.phone.href} class="btn btn-signal !min-h-14 !px-7 !text-lg">
+            <Icon name="Phone" class="size-5" /> Jetzt anrufen
+          </a>
+          <a href="/kontakt/#anfrage" class="btn btn-ghost-light !min-h-14 !px-7 !text-lg">
+            Angebot anfragen <Icon name="ArrowRight" class="size-5" />
+          </a>
+        </div>
+        <a href={site.phone.href} class="hero-in group mt-8 inline-flex items-baseline gap-3 text-white" style="--d:320ms">
+          <span class="text-sm font-semibold tracking-[0.16em] text-ice uppercase">Tel.</span>
+          <span class="font-display text-3xl font-extrabold tracking-tight underline decoration-signal decoration-[3px] underline-offset-8 group-hover:decoration-white md:text-4xl">{site.phone.display}</span>
+        </a>
+        <ul class="hero-in mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm text-ice" style="--d:400ms">
+          <li class="flex items-center gap-2"><Icon name="BadgeCheck" class="size-5 text-white" /> Hausverwaltungen, Firmen & Privat</li>
+          <li class="flex items-center gap-2"><Icon name="Snowflake" class="size-5 text-white" /> Eigener Maschinenpark</li>
+          <li class="flex items-center gap-2"><Icon name="Siren" class="size-5 text-white" /> Notfall: <a href={site.mobile.href} class="font-semibold text-white underline">{site.mobile.display}</a></li>
+        </ul>
+      </div>
+      <div class="hero-in flex justify-center lg:justify-end" style="--d:200ms">
+        <KehrwocheSign />
+      </div>
+    </div>
+    <svg class="absolute inset-x-0 -bottom-px h-12 w-full text-bg md:h-20" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 80h1440V18C1180 70 900 78 640 52 400 28 200 10 0 40z" fill="currentColor" />
+    </svg>
+  </section>
+
+  <!-- ============================ LEISTUNGEN ============================ -->
+  <section class="container-x pt-16 md:pt-20" aria-labelledby="leistungen-title">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-2xl" data-reveal>
+        <p class="eyebrow">Leistungen</p>
+        <h2 id="leistungen-title" class="h-section mt-3">Alles rund ums Haus.<br class="hidden sm:block" /> Aus einer Hand.</h2>
+        <p class="mt-4 text-lg text-muted">Von allgemeinen Instandhaltungsarbeiten bis zur Grünanlagenpflege – für Hausverwaltungen, Firmen, Privathaushalte und Senioren.</p>
+      </div>
+      <a href="/leistungen/" class="btn btn-ghost self-start md:self-auto" data-reveal>Alle Leistungen <Icon name="ArrowRight" class="size-5" /></a>
+    </div>
+    <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {services.map((s, i) => <li><ServiceCard service={s} index={i} /></li>)}
+    </ul>
+  </section>
+
+  <!-- ============================ VORTEILE ============================ -->
+  <section class="mt-24 bg-surface-alt py-20 md:py-28" aria-labelledby="vorteile-title">
+    <div class="container-x grid gap-14 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+      <div data-reveal>
+        <p class="eyebrow">Warum Becker</p>
+        <h2 id="vorteile-title" class="h-section mt-3">Verlässlich wie die Kehrwoche.</h2>
+        <p class="mt-5 text-lg text-muted">
+          Wir verfügen in allen Arbeitsbereichen über größte Fachkompetenz und bieten Ihnen ein preisgünstiges und umfassendes Serviceangebot. Überzeugen Sie sich selbst.
+        </p>
+        <dl class="mt-10 grid grid-cols-2 gap-4">
+          <div class="card p-5">
+            <dt class="text-sm font-semibold text-muted">Leistungen</dt>
+            <dd class="font-display text-5xl font-black text-brand-ink" data-count={services.length}>{services.length}</dd>
+          </div>
+          <div class="card p-5">
+            <dt class="text-sm font-semibold text-muted">Monate im Einsatz</dt>
+            <dd class="font-display text-5xl font-black text-brand-ink" data-count="12">12</dd>
+          </div>
+          <div class="card p-5">
+            <dt class="text-sm font-semibold text-muted">Sprachen im Team</dt>
+            <dd class="font-display text-5xl font-black text-brand-ink"><span data-count="4">4</span><span class="ml-2 align-middle text-sm font-bold tracking-wider text-muted">DE EN TH RU</span></dd>
+          </div>
+          <div class="card p-5">
+            <dt class="text-sm font-semibold text-muted">Ansprechpartner</dt>
+            <dd class="font-display text-5xl font-black text-brand-ink"><span data-count="1">1</span><span class="ml-2 align-middle text-sm font-bold text-muted">für alles</span></dd>
+          </div>
+        </dl>
+      </div>
+      <ul class="grid gap-5 sm:grid-cols-2">
+        {
+          benefits.map((b, i) => (
+            <li class="card p-6" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+              <span class="grid size-12 place-items-center rounded-xl bg-hms-blue text-white">
+                <Icon name={b.icon} class="size-6" />
+              </span>
+              <h3 class="mt-4 text-xl font-extrabold">{b.title}</h3>
+              <p class="mt-2 text-muted">{b.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ======================= MASCHINENPARK / FUHRPARK ======================= -->
+  <section class="container-x mt-24" aria-labelledby="fuhrpark-title">
+    <div class="grid items-center gap-10 lg:grid-cols-2">
+      <div class="overflow-hidden rounded-[2rem] shadow-[var(--shadow-lift)]" data-reveal>
+        <Photo name="fuhrpark" alt="Fuhrpark von Hausmeister-Service Becker: weiße Transporter und rote Maschinen für Winterdienst und Grünpflege" placeholder="Fuhrpark: weiße Transporter & rote Maschinen" icon="Truck" ratio="16/10" />
+      </div>
+      <div data-reveal>
+        <p class="eyebrow">Maschinenpark</p>
+        <h2 id="fuhrpark-title" class="h-section mt-3">Gerüstet für jeden Auftrag.</h2>
+        <p class="mt-5 text-lg text-muted">
+          Durch eine große Breite in unserem Technikbestand sind wir mühelos in der Lage, jeden Auftrag in beliebiger Größe zu bearbeiten – ob Schneeräumung auf dem Firmenparkplatz oder Rasenpflege in der Wohnanlage.
+        </p>
+        <ul class="mt-6 space-y-3">
+          {['Schneeräumung maschinell oder von Hand', 'Streudienst mit Salz oder Splitt – Sie haben die Wahl', 'Eigene Transporter für Umzug & Entrümpelung'].map((t) => (
+            <li class="flex gap-3"><Icon name="Check" class="mt-0.5 size-6 shrink-0 rounded-full bg-hms-blue p-1 text-white" strokeWidth={3} /> <span class="text-ink">{t}</span></li>
+          ))}
+        </ul>
+        <a href="/leistungen/winterdienst/" class="btn btn-primary mt-8">Winterdienst ansehen <Icon name="ArrowRight" class="size-5" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ JAHRESPLAN ============================ -->
+  <section class="container-x mt-28" aria-labelledby="jahresplan-title">
+    <div class="max-w-2xl" data-reveal>
+      <p class="eyebrow">Jahresplan</p>
+      <h2 id="jahresplan-title" class="h-section mt-3">Was steht wann an?</h2>
+      <p class="mt-4 text-lg text-muted">Unser Jahr rund ums Haus auf einen Blick. Der aktuelle Monat ist markiert – tippen Sie auf einen Monat für Details.</p>
+    </div>
+    <div class="mt-10" data-reveal>
+      <YearPlan />
+    </div>
+  </section>
+
+  <!-- ============================ GESCHICHTE ============================ -->
+  <section class="container-x mt-28" aria-labelledby="story-title">
+    <div class="relative overflow-hidden rounded-[2rem] bg-hms-navy px-6 py-14 text-white sm:px-12 md:py-20">
+      <div class="sweep-pattern absolute inset-0" aria-hidden="true"></div>
+      <div class="relative grid items-center gap-10 md:grid-cols-[1fr_auto]">
+        <div class="max-w-2xl" data-reveal>
+          <p class="mb-3 font-display text-sm font-bold tracking-[0.18em] text-ice uppercase">Wie alles begann</p>
+          <h2 id="story-title" class="h-section text-white">
+            Mit der schwäbischen Kehrwoche für zwei ältere Damen fing es an …
+          </h2>
+          <p class="mt-5 text-lg text-ice">
+            Heute übernimmt unser Hausmeisterdienst für Hausverwaltungen, Firmen und Privathaushalte alle anfallenden Arbeiten rund ums Gebäude. Die Haltung ist geblieben: zuverlässig, ordentlich, persönlich.
+          </p>
+          <a href="/ueber-uns/" class="btn btn-ghost-light mt-8">Über uns & Team <Icon name="ArrowRight" class="size-5" /></a>
+        </div>
+        <div class="mx-auto w-40 text-ice md:w-52" data-reveal style="--reveal-delay:150ms">
+          <Mascot />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ REFERENZ ============================ -->
+  <section class="container-x mt-28" aria-labelledby="referenz-title">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-center">
+      <div data-reveal>
+        <p class="eyebrow">Referenz</p>
+        <h2 id="referenz-title" class="h-section mt-3">Zufriedene Kunden sind die Basis unseres Erfolgs.</h2>
+        <a href="/referenzen/" class="btn btn-ghost mt-8">Alle Referenzen <Icon name="ArrowRight" class="size-5" /></a>
+      </div>
+      <figure class="card relative overflow-hidden p-8 md:p-10" data-reveal>
+        <Icon name="Quote" class="absolute top-6 right-6 size-16 text-surface-alt" strokeWidth={1.5} />
+        <p class="font-display text-sm font-bold tracking-[0.16em] text-brand-ink uppercase">Stadtsiedlung Heilbronn</p>
+        <blockquote class="mt-4 text-xl leading-relaxed text-ink md:text-2xl">
+          Die Stadtsiedlung Heilbronn zählt seit Jahren zu unserem Kundenkreis. Speziell die Aufgaben der Hausverwaltungen sind uns dadurch bestens vertraut – inklusive der Abwicklung von Brand- und Wasserschäden bis zur Versicherung.
+        </blockquote>
+        <figcaption class="mt-6 flex flex-wrap gap-2">
+          <span class="rounded-full bg-surface-alt px-3 py-1 text-sm font-semibold">Hausverwaltung</span>
+          <span class="rounded-full bg-surface-alt px-3 py-1 text-sm font-semibold">Brand- & Wasserschäden</span>
+          <span class="rounded-full bg-surface-alt px-3 py-1 text-sm font-semibold">Versicherungsabwicklung</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================ NOTFALL ============================ -->
+  <section class="container-x mt-24" aria-labelledby="notfall-title">
+    <div class="flex flex-col gap-6 rounded-[2rem] border-2 border-signal/60 bg-surface p-6 sm:p-8 md:flex-row md:items-center md:justify-between" data-reveal>
+      <div class="flex items-start gap-5">
+        <span class="grid size-14 shrink-0 place-items-center rounded-2xl bg-signal-btn text-white"><Icon name="Droplets" class="size-7" /></span>
+        <div>
+          <h2 id="notfall-title" class="text-2xl font-extrabold md:text-3xl">Wasser- oder Brandschaden?</h2>
+          <p class="mt-1 text-muted">Sofortmaßnahmen, Sanierung und Abwicklung mit der Versicherung – rufen Sie direkt mobil an.</p>
+        </div>
+      </div>
+      <a href={site.mobile.href} class="btn btn-signal shrink-0 !text-lg"><Icon name="Siren" class="size-5" /> {site.mobile.display}</a>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .hero-glow {
+    background:
+      radial-gradient(60rem 30rem at 85% 10%, rgb(207 237 254 / 0.16), transparent 60%),
+      radial-gradient(40rem 30rem at -10% 110%, rgb(5 5 120 / 0.6), transparent 60%);
+  }
+  .hero-mark {
+    position: relative;
+    white-space: nowrap;
+    color: var(--hms-ice);
+  }
+  .hero-mark::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.02em;
+    height: 0.14em;
+    border-radius: 99px;
+    background: var(--hms-signal);
+    transform-origin: left;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-in {
+      animation: hero-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: var(--d, 0ms);
+    }
+    .hero-mark::after {
+      animation: sweep 1s 0.7s cubic-bezier(0.6, 0, 0.2, 1) both;
+    }
+  }
+  @keyframes hero-in {
+    from {
+      opacity: 0.01;
+      transform: translateY(18px);
+    }
+  }
+  @keyframes sweep {
+    from {
+      transform: scaleX(0);
+    }
+  }
+</style>

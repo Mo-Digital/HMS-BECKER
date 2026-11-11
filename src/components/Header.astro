@@ -1,0 +1,260 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site, mainNav } from '../data/site';
+import { services } from '../data/services';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+<header id="site-header" class="site-header sticky top-0 z-40" data-scrolled="false">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-hms-navy">
+    Zum Inhalt springen
+  </a>
+  <div class="container-x flex h-[4.5rem] items-center justify-between gap-4">
+    <a href="/" class="header-logo rounded-xl" aria-label="Hausmeister-Service Becker – zur Startseite">
+      <Logo tone="auto" class="header-logo-light" />
+    </a>
+
+    <nav aria-label="Hauptnavigation" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        <li class="group relative">
+          <a
+            href="/leistungen/"
+            class:list={['nav-link', isActive('/leistungen/') && 'is-active']}
+            aria-current={isActive('/leistungen/') ? 'page' : undefined}
+          >
+            Leistungen <Icon name="ChevronDown" class="size-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
+          </a>
+          <div class="mega invisible absolute top-full left-1/2 w-[40rem] -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+            <ul class="card grid grid-cols-2 gap-1 p-3">
+              {
+                services.map((s) => (
+                  <li>
+                    <a href={`/leistungen/${s.slug}/`} class="flex items-start gap-3 rounded-xl p-3 hover:bg-surface-alt">
+                      <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-surface-alt text-brand-ink">
+                        <Icon name={s.icon} class="size-5" />
+                      </span>
+                      <span>
+                        <span class="block font-display font-bold text-ink">{s.title}</span>
+                        <span class="line-clamp-1 text-sm text-muted">{s.teaser}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </li>
+        {
+          mainNav.slice(1).map((n) => (
+            <li>
+              <a href={n.href} class:list={['nav-link', isActive(n.href) && 'is-active']} aria-current={isActive(n.href) ? 'page' : undefined}>
+                {n.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button type="button" class="icon-btn grid place-items-center" data-theme-toggle aria-label="Farbmodus wechseln (hell/dunkel)">
+        <Icon name="Moon" class="size-5 dark:hidden" />
+        <Icon name="Sun" class="hidden size-5 dark:block" />
+      </button>
+      <a href={site.phone.href} class="btn btn-signal hidden !min-h-11 !px-5 !text-base md:inline-flex">
+        <Icon name="Phone" class="size-5" />
+        {site.phone.display}
+      </a>
+      <button type="button" class="icon-btn grid place-items-center lg:hidden" data-menu-open aria-controls="mobile-menu" aria-expanded="false" aria-label="Menü öffnen">
+        <Icon name="Menu" class="size-6" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobiles Menü -->
+  <div id="mobile-menu" class="mobile-menu fixed inset-0 z-50 hidden bg-hms-navy text-white lg:hidden" role="dialog" aria-modal="true" aria-label="Menü">
+    <div class="container-x flex h-[4.5rem] items-center justify-between">
+      <Logo tone="light" />
+      <button type="button" class="icon-btn grid place-items-center !text-white" data-menu-close aria-label="Menü schließen">
+        <Icon name="X" class="size-7" />
+      </button>
+    </div>
+    <nav class="container-x mt-4 overflow-y-auto pb-40" style="max-height: calc(100dvh - 4.5rem)" aria-label="Mobile Navigation">
+      <ul class="space-y-1">
+        <li><a href="/" class="m-link">Startseite</a></li>
+        {mainNav.map((n) => <li><a href={n.href} class="m-link">{n.label}</a></li>)}
+      </ul>
+      <p class="mt-8 mb-3 text-xs font-bold tracking-[0.2em] text-ice/80 uppercase">Alle Leistungen</p>
+      <ul class="grid grid-cols-1 gap-1 sm:grid-cols-2">
+        {
+          services.map((s) => (
+            <li>
+              <a href={`/leistungen/${s.slug}/`} class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-ice hover:bg-white/10">
+                <Icon name={s.icon} class="size-5" /> {s.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-8 grid gap-3">
+        <a href={site.phone.href} class="btn btn-signal w-full"><Icon name="Phone" class="size-5" /> {site.phone.display}</a>
+        <a href={site.mobile.href} class="btn btn-ghost-light w-full"><Icon name="Siren" class="size-5" /> Notfall: {site.mobile.display}</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    color: var(--c-ink);
+    background: color-mix(in srgb, var(--c-bg) 82%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+  /* Auf Seiten mit blauem Hero ist der Header zunächst transparent/hell */
+  :global(body[data-hero='brand']) .site-header[data-scrolled='false'] {
+    background: var(--hms-blue);
+    color: #fff;
+  }
+  :global(body[data-hero='brand']) .site-header[data-scrolled='false'] .header-logo :global(.logo) {
+    --logo-mark-bg: #fff;
+    --logo-mark-fg: var(--hms-blue);
+    color: #fff;
+  }
+  :global(body[data-hero='brand']) .site-header[data-scrolled='false'] .header-logo :global(.logo-top) {
+    color: var(--hms-ice);
+  }
+  :global(body[data-hero='brand']) .site-header[data-scrolled='false'] .btn-signal {
+    box-shadow: none;
+  }
+  /* Beim Scrollen: Marineblau */
+  .site-header[data-scrolled='true'] {
+    background: color-mix(in srgb, var(--hms-navy) 94%, transparent);
+    color: #fff;
+    border-bottom-color: rgb(207 237 254 / 0.12);
+  }
+  .site-header[data-scrolled='true'] .header-logo :global(.logo) {
+    --logo-mark-bg: #fff;
+    --logo-mark-fg: var(--hms-blue);
+    color: #fff;
+  }
+  .site-header[data-scrolled='true'] .header-logo :global(.logo-top) {
+    color: var(--hms-ice);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.975rem;
+    color: inherit;
+    text-decoration: none;
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0.9rem;
+    right: 0.9rem;
+    bottom: 0.25rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--hms-signal);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+  .nav-link:hover::after,
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+  }
+  .mega {
+    color: var(--c-ink);
+  }
+  .icon-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    color: inherit;
+    transition: background-color 0.2s;
+  }
+  .icon-btn:hover {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+  .mobile-menu.is-open {
+    display: block;
+    animation: menu-in 0.25s ease-out;
+  }
+  .m-link {
+    display: block;
+    padding: 0.7rem 0.25rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.75rem;
+    border-bottom: 1px solid rgb(207 237 254 / 0.12);
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('site-header')!;
+  const onScroll = () => header.setAttribute('data-scrolled', String(window.scrollY > 24));
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const menu = document.getElementById('mobile-menu')!;
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]')!;
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]')!;
+  const open = () => {
+    menu.classList.add('is-open');
+    openBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  };
+  const close = () => {
+    menu.classList.remove('is-open');
+    openBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    openBtn.focus();
+  };
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
+  });
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+    menu.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }));
+
+  // Fokus im Menü halten (Tastaturbedienung)
+  menu.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const f = menu.querySelectorAll<HTMLElement>('a, button');
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  // Hell/Dunkel-Umschalter
+  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('hms-theme', next); } catch {}
+  });
+</script>

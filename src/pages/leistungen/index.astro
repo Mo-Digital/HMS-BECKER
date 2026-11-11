@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import YearPlan from '../../components/YearPlan.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { services } from '../../data/services';
+import { site } from '../../data/site';
+---
+<Base
+  title="Leistungen – Hausmeisterservice Heilbronn"
+  description="Alle Leistungen von Hausmeister-Service Becker in Heilbronn: Hausmeisterdienst, Kehrwoche, Winterdienst, Grünpflege, Seniorenbetreuung, Entrümpelung, Umzugshilfe, Wasser- & Brandschäden, Schimmel."
+  hero="brand"
+  schema={[
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Start', item: `${site.url}/` },
+        { '@type': 'ListItem', position: 2, name: 'Leistungen', item: `${site.url}/leistungen/` },
+      ],
+    },
+  ]}
+>
+  <PageHero
+    title="Unsere Leistungen"
+    eyebrow="Rund ums Haus"
+    lead="Überzeugen Sie sich von unserem großen Leistungs- und Serviceangebot. Alles lässt sich ganz nach Wunsch und wie vor Ort benötigt kombinieren."
+    crumbs={[{ label: 'Leistungen' }]}
+  />
+
+  <section class="container-x py-16 md:py-20" aria-label="Leistungsübersicht">
+    <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {services.map((s, i) => <li><ServiceCard service={s} index={i} /></li>)}
+    </ul>
+  </section>
+
+  <section class="bg-surface-alt py-20" aria-labelledby="mehr-title">
+    <div class="container-x grid gap-10 lg:grid-cols-2 lg:items-center">
+      <div data-reveal>
+        <p class="eyebrow">Und sonst?</p>
+        <h2 id="mehr-title" class="h-section mt-3">Haben wir noch etwas vergessen?</h2>
+        <p class="mt-5 text-lg text-muted">
+          Anregungen, Wünsche und Fragen sind jederzeit willkommen. Wir passen unsere Serviceleistungen gerne Ihren Bedürfnissen an – Sie wollen vielleicht nur ein paar Möbel in Ihren Räumen umstellen? Sprechen Sie uns an.
+        </p>
+        <p class="mt-6 font-display text-2xl font-extrabold text-brand-ink">Sie genießen Ihr Leben – wir kümmern uns um den Rest.</p>
+      </div>
+      <div class="card p-6 sm:p-8" data-reveal>
+        <h3 class="text-xl font-extrabold">Ihr Betreuungsvertrag</h3>
+        <p class="mt-2 text-muted">Im Rahmen eines Betreuungsvertrages achten wir auf die Ordnung und den einwandfreien Gesamtzustand der Immobilie.</p>
+        <ul class="mt-5 space-y-3">
+          {['Termine mit Fremdfirmen abstimmen', 'Einhaltung der Hausordnung im Blick', 'Kontakt mit Eigentümern und Mietern pflegen', 'Vertretung bei Urlaub oder Krankheit'].map((t) => (
+            <li class="flex gap-3"><Icon name="Check" class="mt-0.5 size-6 shrink-0 rounded-full bg-hms-blue p-1 text-white" strokeWidth={3} />{t}</li>
+          ))}
+        </ul>
+        <a href="/leistungen/hausmeisterdienst/" class="btn btn-primary mt-7">Zum Hausmeisterdienst <Icon name="ArrowRight" class="size-5" /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-x mt-24" aria-labelledby="jp-title">
+    <div class="max-w-2xl" data-reveal>
+      <p class="eyebrow">Jahresplan</p>
+      <h2 id="jp-title" class="h-section mt-3">Das ganze Jahr für Sie im Einsatz.</h2>
+    </div>
+    <div class="mt-10" data-reveal><YearPlan /></div>
+  </section>
+
+  <CtaBand />
+</Base>

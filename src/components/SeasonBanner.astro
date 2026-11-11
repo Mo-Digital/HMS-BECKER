@@ -1,0 +1,43 @@
+---
+/**
+ * Saison-Hinweis ganz oben. Welcher Banner sichtbar ist, entscheidet ein
+ * kleines Skript im <head> (setzt data-season am <html>) – ohne Layout-Sprung.
+ * Inhalte: src/data/season.ts
+ */
+import Icon from './Icon.astro';
+import { seasonBanners } from '../data/season';
+---
+{
+  seasonBanners.map((b) => (
+    <div data-season-banner={b.key} class="relative z-50 bg-hms-navy text-ice">
+      <div class="container-x flex min-h-11 items-center gap-3 py-2 pr-10 text-sm">
+        <Icon name={b.icon} class="size-5 shrink-0 text-ice" />
+        <p class="min-w-0 flex-1">
+          <strong class="font-display font-bold text-white">{b.text}</strong>
+          <span class="hidden sm:inline"> {b.sub}</span>
+        </p>
+        <a href={b.href} class="shrink-0 rounded-full bg-signal-btn px-3 py-1 text-xs font-bold text-white hover:bg-[var(--c-signal-btn-hover)]">
+          {b.cta}
+        </a>
+        <button
+          type="button"
+          class="absolute top-1/2 right-2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-ice hover:bg-white/10"
+          data-banner-close
+          aria-label="Hinweis schließen"
+        >
+          <Icon name="X" class="size-4" />
+        </button>
+      </div>
+    </div>
+  ))
+}
+<script>
+  document.querySelectorAll('[data-banner-close]').forEach((b) =>
+    b.addEventListener('click', () => {
+      document.documentElement.setAttribute('data-banner-closed', '');
+      try {
+        sessionStorage.setItem('hms-banner-closed', '1');
+      } catch {}
+    }),
+  );
+</script>
